@@ -38,10 +38,22 @@
 \chead{\fancyplain{}{A Research Agenda for Historical and Multilingual Optical Character Recognition}}
 \rhead{}
 
-% \usepackage{titlesec}
-% \titleformat{\chapter}[display]{\normalfont\bfseries}{}{0pt}{\Huge}
-% \titleformat{\section}[display]{\normalfont\bfseries}{}{0pt}{\Large}
-% \titleformat{\subsection}[display]{\normalfont\bfseries}{}{0pt}{\large}
+\newcounter{reccounter}
+\renewcommand{\thereccounter}{\arabic{reccounter}}
+\newcommand{\recommend}[2]{\refstepcounter{reccounter}%
+  \label{rec:#1}%
+  \subsection{\#\thereccounter. #2}%
+  \label{sec:rec-#1}}
+
+\newcounter{appcounter}
+\renewcommand{\theappcounter}{\Alph{appcounter}}
+\renewcommand{\appendix}[2]{\refstepcounter{appcounter}%
+  \label{app:#1}%
+  \section{Appendix~\theappcounter: #2}%
+  \label{sec:app-#1}}
+
+\renewcommand{\bibname}{References}
+\usepackage[numbib]{tocbibind}
 
 \setcounter{secnumdepth}{-1}
 
@@ -206,8 +218,7 @@ Throughout the interview process and the workshop, we were greatly assisted by B
 
 The following nine broad recommendations arose from our interviews and discussions with domain experts and from further research. At the start of each recommendation, we repeat the brief description from the summary of this report. After describing the scope of the recommendation in more detail, we propose next steps that researchers and funders could take to make progress. Our estimates for the costs to take these steps are expressed in broad ranges: low (\$25,000--250,000), medium (\$250,000--750,000), and high (\$750,000+).
 
-\subsection{1. Improve statistical analysis of OCR output}
-\label{sec:rec-stats}
+\recommend{stats}{Improve statistical analysis of OCR output}
 
 \paragraph{Addressed to:} Researchers in natural language processing and information retrieval; curators of large collections of OCR transcripts; scholars using IR and text mining technologies in their research; funders interested in conducting and publishing digital scholarship with OCR'd texts and in building language technologies to work with noisy input.
 
@@ -228,7 +239,7 @@ Before we discuss methods for improving OCR at the level of individual documents
 
 One common reaction of scholars and readers when confronted with OCR output is \emph{to decide that it is too noisy to use}. Many scholars we surveyed said that they avoided using OCR'd corpora due to the large number of errors. Some scholars described selecting among corpora on the basis of their error rates. We suspect, though more ethnography and analysis might make the analysis more sophisticated, that this reaction is an overgeneralization from the task of reading an OCR transcript as they would any other digitized text. In other words, the slowdown in reading induced by frequent errors causes readers to infer that other tasks may be similarly impaired. Similarly, a scholar attempting to produce a clean text by correcting OCR output may find that completely retyping it is faster and, again, conclude that the OCR transcript is useless for other tasks, as well. Further surveys might investigate whether these reactions are less common to users of image-front interfaces. It is also suggestive that one of the most widespread---and, as we quoted from Underwood above, ``undertheorized''---uses of OCR is for search, where users are least likely to read the transcript as a connected text.
 
-One natural response to OCR errors is to attempt to correct them. Even if we ignore, or do not have access to, the image from which the OCR was produced, we might still apply statistical models trained on clean text and a likely error distribution to infer a better transcript. This approach of taking a given OCR transcript and inferring the correct reading is usually known as \textbf{OCR post-correction}.\footnote{Tong and Evans (1996) provide an early and straightforward example of a ``noisy channel'' approach to OCR post-correction. Later approaches have generalized such models to more complicated cascades of finite-state transducers (Kolak et al., 2003; Xu and Smith, 2017), or used computational models of morphologically rich languages for spell checking (Boschetti et al., 2009), or used supervised training of log-linear models (Lund et al., 2011), or applied data augmentation and encoder-decoder models to build unsupervised models using only clean text for training (Dong and Smith, 2018).}  For supervised training, and for model selection and refinement of unsupervised models, in-domain training data is usually necessary to achieve reasonable performance. Selecting good post-correction models may be almost as difficult as selecting the right OCR model for a given text (see below). More work on model \emph{adaptation} (see recommendation \#5 below) is thus likely to be as helpful for improved post-correction, as more effective architectures for supervised learning of transducers. Improved training and adaptation for statistical language models should also be beneficial, in particular for documents with a mixture of languages (recommendation \#6). Finally, performing inference at the scale of collections instead of individual documents will allow these methods to exploit structures from fully duplicated documents to specialized domain vocabularies.
+One natural response to OCR errors is to attempt to correct them. Even if we ignore, or do not have access to, the image from which the OCR was produced, we might still apply statistical models trained on clean text and a likely error distribution to infer a better transcript. This approach of taking a given OCR transcript and inferring the correct reading is usually known as \textbf{OCR post-correction}.\footnote{Tong and Evans (1996) provide an early and straightforward example of a ``noisy channel'' approach to OCR post-correction. Later approaches have generalized such models to more complicated cascades of finite-state transducers (Kolak et al., 2003; Xu and Smith, 2017), or used computational models of morphologically rich languages for spell checking (Boschetti et al., 2009), or used supervised training of log-linear models (Lund et al., 2011), or applied data augmentation and encoder-decoder models to build unsupervised models using only clean text for training \citep{dong18:acl}.}  For supervised training, and for model selection and refinement of unsupervised models, in-domain training data is usually necessary to achieve reasonable performance. Selecting good post-correction models may be almost as difficult as selecting the right OCR model for a given text (see below). More work on model \emph{adaptation} (see Recommendation~\ref{rec:adaptation} below) is thus likely to be as helpful for improved post-correction, as more effective architectures for supervised learning of transducers. Improved training and adaptation for statistical language models should also be beneficial, in particular for documents with a mixture of languages (Recommendation~\ref{rec:diverse}). Finally, performing inference at the scale of collections instead of individual documents will allow these methods to exploit structures from fully duplicated documents to specialized domain vocabularies.
 
 Even with these advances in OCR post-correction, errors will remain. To be sure, it is perfectly valid to evaluate OCR transcripts for their adequacy as reading texts, as it is to train post-correction systems to produce better transcripts according to this metric. But reading a consecutive string is not the only text-analysis task that scholars can perform on digitized corpora. As mentioned above, the most common use for OCR is full-text search. In addition, researchers may wish to apply the same panoply of analysis methods to OCR transcripts that they deploy on other texts: text classification, word clustering and embedding, topic models, part-of-speech taggers, syntactic parsers, text-reuse analysis, and so on. Since scholars naturally are disinclined to devote time on data that turn out not to be useful, it is difficult to assess ``how dirty is too dirty'' for different tasks by meta-analysis of existing work, an example of the``file-drawer effect''.
 
@@ -245,14 +256,13 @@ Many of our interviewees suggested that communication about OCR errors should be
 
 \item one or two small grants to scholars working with OCR'd texts and statisticians or machine-learning researchers to evaluate the impact of OCR on downstream tasks, such as information retrieval, classification, topic modeling, and lexical semantics and to study better communication about research results based on OCR;
 
-\item one or two small grants to cultural heritage institutions from appropriate funders (e.g., IMLS) to study better communication about, and mitigation of, OCR errors. These activities could also be conducted in combination with Recommendation \#8, on assessment tools to help cultural heritage institutions assess when collections should be re-OCR'd; and
+\item one or two small grants to cultural heritage institutions from appropriate funders (e.g., IMLS) to study better communication about, and mitigation of, OCR errors. These activities could also be conducted in combination with Recommendation~\ref{rec:assessment}, on assessment tools to help cultural heritage institutions assess when collections should be re-OCR'd; and
 
-\item a medium-sized grant to machine-learning researchers and curators of large OCR collections to implement collection-scale OCR post-correction, perhaps in combination with model adaptation and language modeling Recommendations \#5 and \#6 below.
+\item a medium-sized grant to machine-learning researchers and curators of large OCR collections to implement collection-scale OCR post-correction, perhaps in combination with model adaptation and language modeling Recommendations~\ref{rec:adaptation} and \ref{rec:diverse} below.
 
 \end{itemize}
 
-\subsection{2. Formulate standards for annotation and evaluation of document layout}
-\label{sec:rec-layout}
+\recommend{layout}{Formulate standards for annotation and evaluation of document layout}
 
 \paragraph{Addressed to:} Researchers in computer vision, book history, and bibliography; organizers and sponsors of workshops; standards committees; funders of digital humanities and bibliography (e.g., the Mellon Foundation or the NEH) and/or computer vision and machine learning (e.g, the NSF or DFG).
 
@@ -288,8 +298,7 @@ What is needed, we propose, are first of all experiments and discussions among h
 
 \end{itemize}
 
-\subsection{3. Exploit existing digital editions for training and test data}
-\label{sec:rec-editions}
+\recommend{editions}{Exploit existing digital editions for training and test data}
 
 \paragraph{Addressed to:} Scholars producing digital editions; NLP researchers; funders in language technologies, library and information science, and the humanities.
 
@@ -320,8 +329,7 @@ During the period of this study, we performed some pilot experiments on creating
 
 This team could also coordinate with communities in textual editing and crowdsourced transcription (see recommendation \#4) to develop standards harmonizing the transcription standards in several historical languages.
 
-\subsection{4. Develop a reusable contribution system for OCR ground truth}
-\label{sec:rec-contribution}
+\recommend{contribution}{Develop a reusable contribution system for OCR ground truth}
 
 \paragraph{Addressed to:} Managers of large digitization projects; experts in crowdsourcing, citizen scholarship, and public humanities; teachers of documentary editing; funders in museum and library science and in the humanities.</span>
 
@@ -346,8 +354,7 @@ One potential model that came up during our interviews and discussions was the e
 
 \end{itemize}
 
-\subsection{5. Develop model adaptation and search for comparable training sets}
-\label{sec:rec-adaptation}
+\recommend{adaptation}{Develop model adaptation and search for comparable training sets}
 
 \paragraph{Addressed to:} Machine-learning researchers; managers of large digitization projects; funders interested in supporting efficient large-scale digitization and in domain adaptation for machine learning.
 
@@ -376,8 +383,7 @@ We therefore propose research focused on searching for and incorporating annotat
 
 \end{itemize}
 
-\subsection{6. Train and test OCR on linguistically diverse texts}
-\label{sec:rec-diverse}
+\recommend{diverse}{Train and test OCR on linguistically diverse texts}
 
 \paragraph{Addressed to:} NLP and OCR researchers and system developers; funders interested in language technologies for low-resource languages and code-switching and in digitization of underserved historical languages.
 
@@ -402,8 +408,7 @@ We propose that builders of OCR models explicitly develop, train, and test their
 
 \end{itemize}
 
-\subsection{7. Convene OCR Institutes in Critical Research Areas}
-\label{sec:rec-institutes}
+\recommend{institutes}{Convene OCR Institutes in Critical Research Areas}
 
 \paragraph{Addressed to:} Libraries and other centers for mass digitization; researchers; funders interested in catalyzing progress on OCR for a particular language or domain.
 
@@ -428,8 +433,7 @@ The potential payoffs to such honed efforts, however, are enormous---transformat
 
 \end{itemize}
 
-\subsection{8. Create an OCR assessment toolkit for cultural heritage institutions}
-\label{sec:rec-assessment}
+\recommend{assessment}{Create an OCR assessment toolkit for cultural heritage institutions}
 
 \paragraph{Addressed to:} Libraries and other curators of repositories of OCR'd documents; funders looking to improve the efficiency and effectiveness of digitization programs in cultural heritage institutions.
 
@@ -450,8 +454,7 @@ The development of an OCR Assessment Toolkit will serve a number of functions. P
 
 \end{itemize}
 
-\subsection{9. Establish an ``OCR Service Bureau''}
-\label{sec:rec-bureau}
+\recommend{bureau}{Establish an ``OCR Service Bureau''}
 
 \paragraph{Addressed to:} Universities; scholarly societies and other non-profit organizations and consortia; funders interested in sustaining historical and multilingual OCR in cultural heritage institutions.
 
@@ -474,113 +477,197 @@ We therefore propose the founding of an ``OCR Service Bureau'', housed in a libr
 
 \end{itemize}
 
+\bibliographystyle{plainnat}
+\bibliography{ocr}
+
+% <p class="c6 c32"><span class="c2"></span><hr style="page-break-before:always;display:none;"><h2 class="c11 c37" id="h.rllgalyuv7d4"><span class="c25"></span></h2><h2 class="c11" id="h.och4zi8tx7q4"><span class="c25">References</span></h2><ul class="c23 lst-kix_1yzjdld97j5x-0 start"><li class="c0 c12"><span class="c2">ACL = Proceedings of the Association for Computational Linguistics</span></li><li class="c0 c12"><span class="c2">ECDL = Proceedings of the European Conference on Digital Libraries</span></li><li class="c0 c12"><span class="c2">ICDAR = Proceedings of the International Conference on Document Analysis and Recognition</span></li><li class="c0 c12"><span class="c2">JCDL = Proceedings of the ACM+IEEE Joint Conference on Digital Libraries</span></li><li class="c0 c12"><span class="c2">NAACL = Proceedings of the North American Chapter of the Association for Computational Linguistics</span></li><li class="c0 c12"><span class="c2">SIGIR = Proceedings of the ACM Special Interest Group on Information Retrieval</span></li></ul>
+
+% <p class="c3"><span>Marie-Louise Ayres (2013) ``Singing for their supper'': Trove, Australian newspapers, and the crowd. In </span><span class="c9">IFLA World Library and Information Congress. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://library.ifla.org/245/1/153-ayres-en.pdf&amp;sa=D&amp;ust=1542739736289000">http://library.ifla.org/245/1/153-ayres-en.pdf</a>&nbsp;</span>
+
+% <p class="c3"><span>Taylor Berg-Kirkpatrick, Greg Durrett, and Dan Klein (2013). Unsupervised transcription of historical documents. In </span><span class="c9">ACL</span><span class="c2">.</span>
+
+% <p class="c3"><span>Taylor Berg-Kirkpatrick and Dan Klein (2014). Improved typesetting models for historical OCR. In </span><span class="c9">ACL</span><span class="c2">.</span>
+
+% <p class="c3"><span>Katherine Bode (2016). Thousands of titles without authors: Digitized newspapers, serial fiction, and the challenges of anonymity. </span><span class="c9">Book History</span><span class="c2">, 16.</span>
+
+% <p class="c3"><span>Federico Boschetti, Matteo Romanello, Alison Babeu, David Bamman, and Gregory Crane (2009). Improving OCR accuracy for classical critical editions. In </span><span class="c9">ECDL</span><span class="c2">.</span>
+
+% <p class="c3"><span>&nbsp;Thomas M. Breuel, Adnan Ul-Hasan, Mayce Al Azawi, and Faisal Shafait (2013). High-performance OCR for printed English and Fraktur using LSTM Networks. In </span><span class="c9">ICDAR</span><span class="c2">.</span>
+
+% <p class="c3"><span>Thomas M. Breuel (2017). Robust, simple page segmentation using hybrid convolutional MDLSTM networks. In </span><span class="c9">ICDAR</span><span class="c2">.</span>
+
+% <p class="c3"><span>Tim Causer, Kris Grint, Anna-Maria Sichani, and Melissa Terras (2018). `Making such bargain': </span><span class="c9">Transcribe Bentham&nbsp;and the quality and cost-effectiveness of crowdsourced transcription. </span><span class="c9">Digital Scholarship in the Humanities</span><span class="c2">, 33(3):467--487.</span>
+
+% <p class="c3"><span>Rui Dong and David A. Smith (2018). Multi-input attention for unsupervised OCR correction. In </span><span class="c9">ACL</span><span class="c2">.</span>
+
+% <p class="c3"><span>Greta Franzini (2012--span><span class="c9">A Catalogue of Digital Editions. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=https://zenodo.org/badge/latestdoi/42574907&amp;sa=D&amp;ust=1542739736291000">https://zenodo.org/badge/latestdoi/42574907</a></span>
+
+% <p class="c3"><span>Greta Franzini, Mike Kestemont, Gabriela Rotari, Melina Jander, Jeremi K. Ochab, Emily Franzini, Joanna Byszuk, Jan Rybicki (2018). Attributing authorship in the noisy digitized correspondence of Jacob and Wilhelm Grimm. </span><span class="c9">Frontiers in Digital Humanities, 5(4). </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=https://doi.org/10.3389/fdigh.2018.00004&amp;sa=D&amp;ust=1542739736291000">https://doi.org/10.3389/fdigh.2018.00004</a></span>
+
+% <p class="c3"><span>Dan Garrette, Hannah Alpert-Abrams, Taylor Berg-Kirkpatrick, and Dan Klein (2015). Unsupervised code-switching for multilingual historical document transcription. In </span><span class="c9">NAACL</span><span class="c2">.</span>
+
+% <p class="c3"><span>Monika Henzinger (2006). Finding near-duplicate web pages: A large-scale evaluation of algorithms. In </span><span class="c9">SIGIR</span><span class="c2">, pages 284--291.</span>
+
+% <p class="c3"><span>Marshall Hodgson (1974). </span><span class="c9">The Venture of Islam: Conscience and History in a World Civilization</span><span class="c2">, Vols 1-3. Chicago: The University of Chicago Press.</span>
+
+% <p class="c3"><span>Daniel J. Hopkins and Gary King (2010). A method of automated nonparametric content analysis for social science. </span><span class="c9">American Journal of Political Science, 54(1):229--247. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://doi.org/10.1111/j.1540-5907.2009.00428.x&amp;sa=D&amp;ust=1542739736292000">http://doi.org/10.1111/j.1540-5907.2009.00428.x</a></span>
+
+% <p class="c3"><span>Benjamin Kiessling, Matthew Thomas Miller, Maxim G. Romanov, and Sarah Bowen Savant (2017). Important new developments in Arabographic optical character recognition (OCR). </span><span class="c9">Al-&#703;U&#7779;&#363;r al-Wus&#7789;&#257;&nbsp;25:1--17. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://islamichistorycommons.org/mem/wp-content/uploads/sites/55/2017/11/UW-25-Savant-et-al.pdf&amp;sa=D&amp;ust=1542739736292000">http://islamichistorycommons.org/mem/wp-content/uploads/sites/55/2017/11/UW-25-Savant-et-al.pdf</a></span>
+
+% <p class="c3"><span>Gary King, Patrick Lam, and Margaret E. Roberts (2017). Computer-assisted keyword and document set discovery from unstructured text. </span><span class="c9">American Journal of Political Science, 61(4):971-988. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://j.mp/2nxUa8N&amp;sa=D&amp;ust=1542739736293000">http://j.mp/2nxUa8N</a></span>
+
+% <p class="c3"><span>Okan Kolak, William Byrne, and Philip Resnik (2003). A generative, probabilistic OCR model for NLP applications. In </span><span class="c9">NAACL</span><span class="c2">, pages 55--62.</span>
+
+% <p class="c3"><span>Gary Kopec and Mauricio Lomelin (1996). Document-specific character template estimation. In </span><span class="c9">Proceedings of the International Society for Optics and Photonics</span><span class="c2">.</span>
+
+% <p class="c3"><span>William B. Lund, Douglas J. Kennard, and Eric K. Ringger (2013). Why multiple document image binarizations improve OCR. In </span><span class="c9">Workshop on Historical Document Imaging and Processing</span><span class="c2">.</span>
+
+% <p class="c3"><span>William B. Lund, Daniel D. Walker, and Eric K. Ringger (2011). Progressive alignment and discriminative error correction for multiple OCR engines. In </span><span class="c9">ICDAR</span><span class="c2">.</span>
+
+% <p class="c3"><span>Manuel Mager, Ximena Gutierrez-Vasques, Gerardo Sierra, Ivan Meza (2018). Challenges of language technologies for the indigenous languages of the Americas. In </span><span class="c9">COLING.</span>
+
+% <p class="c3"><span>Bonnie Mak (2014). Archaeology of a digitization. </span><span class="c9">Journal of the Association for Information Science and Technology</span><span class="c2">, 65(8).</span>
+
+% <p class="c3"><span>Jerome McGann (2014). </span><span class="c9">A New Republic of Letters: Memory and Scholarship in the Age of Digital Reproduction</span><span class="c2">. Harvard University Press.</span>
+
+% <p class="c3"><span>Benjamin Meier, Thilo Stadelmann, Jan Stampfli, Marek Arnold, and Mark Cieliebak (2017). Fully convolutional neural networks for newspaper article segmentation. In </span><span class="c9">ICDAR, pages 414--419. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://doi.org/10.1109/ICDAR.2017.75&amp;sa=D&amp;ust=1542739736294000">http://doi.org/10.1109/ICDAR.2017.75</a></span>
+
+% <p class="c3"><span>Matthew Thomas Miller, Maxim Romanov, and Sarah Bowen Savant (2018). Digitizing the textual heritage of the premodern Islamicate world: Principles and plans. </span><span class="c9">International Journal of Middle Eastern Studies, 50:103--109.</span>
+
+% <p class="c3"><span>Laura K. Nelson (2017). Computational grounded theory. </span><span class="c9">Sociological Methods &amp; Research, </span><span class="c9">19(3). </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://doi.org/10.1177/0049124117729703&amp;sa=D&amp;ust=1542739736295000">http://doi.org/10.1177/0049124117729703</a></span>
+
+% <p class="c3"><span>Sofia Ares Oliveira, Benoit Seguin, and Fr&eacute;d&eacute;ric Kaplan (2018). dhSegment: A generic deep-learning approach for document segmentation. In </span><span class="c9">Frontiers in Handwriting Recognition (ICFHR)</span><span class="c2">, pages 7-12.</span>
+
+% <p class="c3"><span>Andrew Piper (2018). </span><span class="c9">Enumerations: Data and Literary Study</span><span class="c2">. University of Chicago Press.</span>
+
+% <p class="c3"><span>David A. Smith, Ryan Cordell, Elizabeth Maddock Dillon, Nick Stramp, and John Wilkerson (2014). Detecting and modeling local text reuse. In </span><span class="c9">JCDL</span><span class="c2">.</span>
+
+% <p class="c3"><span>David A. Smith, Ryan Cordell, and Abigail Mullen (2015). Computational methods for uncovering reprinted texts in antebellum newspapers. </span><span class="c9">American Literary History</span><span class="c2">, 27(3).</span>
+
+% <p class="c3"><span>T. F. Smith and M. S. Waterman (1981). Identification of common molecular subsequences. </span><span class="c9">Journal of Molecular Biology</span><span class="c2">, 147(1):195--197.</span>
+
+% <p class="c3"><span class="c2">Uwe Springmann and Anke L&uuml;deling (2016). OCR of historical printings with an application to building diachronic corpora: A case study using the RIDGES herbal corpus. arXiv preprint 1608.02153.</span>
+
+% <p class="c3"><span>Andrew Stauffer (2012). The nineteenth-century archive in the digital age. </span><span class="c9">European Romantic Review</span><span class="c2">, 23(3).</span>
+
+% <p class="c3"><span>Donald Sturgeon (2017). Unsupervised extraction of training data for pre-modern Chinese OCR. In </span><span class="c9">Proceedings of the Florida Artificial Intelligence Research Society Conference (FLAIRS)</span><span class="c2">, pages 613--618.</span>
+
+% <p class="c3"><span>Xiang Tong and David A. Evans (1996). A statistical approach to automatic OCR error correction in context. In </span><span class="c9">Proceedings of the Workshop on Very Large Corpora</span><span class="c2">, pages 88--100.</span>
+
+% <p class="c3"><span>Ted Underwood (2014). Theorizing research practices we forgot to theorize twenty years ago. </span><span class="c9">Representations</span><span class="c2">&nbsp;127(1):64--72.</span>
+
+% <p class="c3"><span>David Wemhoener, Ismet Zeki Yalniz, and R. Manmatha (2013). Creating an improved version using noisy OCR from multiple editions. In </span><span class="c9">ICDAR</span><span class="c2">, pages 160--164.</span>
+
+% <p class="c3"><span>John Wilkerson, David A. Smith, and Nick Stramp (2015). Tracing the flow of policy ideas in legislatures: A text reuse approach. </span><span class="c9 c47">American Journal of Political Science.</span>
+
+% <p class="c3"><span>Shaobin Xu and David A. Smith (2017). Retrieving and combining repeated passages to improve OCR. In </span><span class="c9">JCDL</span><span class="c2">.</span>
+
+% <p class="c3"><span>Yue Xu, Wenhao He, Fei Yin, and Cheng-Lin Liu (2017). Page segmentation for historical handwritten documents using fully convolutional networks. In </span><span class="c9">ICDAR, pages 541--546.</span>
+
+\chapter{Appendices}
+
+\appendix{questions}{Interview Questions}
+
+Below we list the questions with which we began the targeted interviews conducted at the start of our study, though we often adjusted these prompts as interviews progressed in order to follow individuals' ideas and insights. We will provide access to our notes on these interviews for research purposes upon request.
+\begin{enumerate}
+
+\item What are the areas of greatest need (i.e. the areas where better OCR would be a game-changer) in your area of research?
+
+\item What kinds of research questions are you able to ask with current OCR?
+
+\item What kinds of research questions can you not even ask with current, errorful OCR?
+
+\item What are the greatest recent advances in research with OCR and how have they changed the research landscape?
+
+\item Where has OCR been most helpful for your particular research area?
+
+\item Where is the most promising work being done? Good examples to emulate?
+
+\item What are the most promising techniques for improving our assessment of the reliability of research conclusions derived from OCR data?
+
+\item What is an example of an OCR corpus that had errors but still made research possible? (i.e. what are research-tolerable errors?)
+
+\item What are some examples of texts too bad to use? What kinds of improvements are most urgent for these?
+
+\end{enumerate}
+
+\appendix{exec-summary}{Executive Summary of Interviews and Survey}
+
+The following summary was prepared in advance of the workshop at Northeastern University, and distributed to workshop participants on February 7, 2018, in order to seed our conversation.
+
+To prepare for our workshop and final report on an agenda for historical and multilingual OCR, we conducted an online survey, interviews with individual researchers, and group discussions on specific topics. We aimed to represent the views and needs of humanities researchers working with transcribed documents; library professionals curating, digitizing, and cataloguing their collections; and OCR researchers in academia and industry. These conversations revealed several interesting avenues for making progress in historical OCR; here, we discuss five broad areas that it seems to us are particularly promising. Notwithstanding these lessons we have drawn from the survey so far, we encourage workshop participants to raise further issues.
+
+\subsection{Corpora and evaluation}
+
+Probably the most important consideration in making progress on historical and multilingual OCR will be the availability of annotated data for evaluating the performance of OCR systems. To lower barriers to entry, both the images and the reference transcription should be released  under open-access licenses. Transcription guidelines should encourage practices useful for training OCR, e.g., preserving hyphenation, original spelling, and page location information. Normalized transcriptions aligned to OCR output and born-digital works can provide alternative annotated data for training and testing. In languages and collections where digitization is just beginning (e.g., Arabic), cataloguing and OCR may proceed in tandem.
+
+Many humanities projects have had success with distributed transcription and editing, whether as part of coursework, as independent student contributions to research, or through the contributions of wider communities of interest (``the crowd''). Designing these systems for contribution with OCR in mind could provide additional payoff for human effort. Other mixed-initiative human-computer systems might be developed and applied.
+
+While character- and word-error rates are useful, general evaluation metrics, researchers could also design metrics that correlate well with downstream tasks. (See ``Working with imperfect OCR'' below.) Evaluation metrics for layout analysis are necessary for making progress on that task.
+
+\subsection{Layout analysis}
+
+Historical printed and manuscript documents present an intimidating array of different formats. Manuscript annotations make even first-pass text detection more difficult, and the difficulties only grow with multiple registers of footnotes, marginalia, and other typographic devices. Reference works, newspapers, and avant-garde literature mix authors, genres, and even languages (see below) on a single sheet. New research is needed to develop useful metrics for layout analysis. New end-to-end recognition methods can provide opportunities to propagate information from text transcription and language modeling back to layout analysis. The interests of bibliographers, book historians, and others in the material presentation of text can help researchers develop models of layout, composition, and typography.
+
+\subsection{Working with imperfect OCR}
+
+When asked why they choose not to use OCR'd data, researchers commonly cite inaccurate transcriptions; other researchers use ``dirty'' data with success. Since scholars naturally don't want to waste their time with data that turn out not to be useful, it is difficult to assess ``how dirty is too dirty'' for different tasks by meta-analysis of existing work. Some work has been done measuring the impact of OCR quality on downstream tasks from topic modeling and part-of-speech tagging to information retrieval. In addition to more work on statistical inference and post-correction, we might look for improvements in statistical communication. For example, if a search engine returns five results for some rare term, can we infer enough about the error characteristics of the underlying OCR to estimate how likely the true frequency is likely to be three, or eight? These issues of reasoning about and communicating possible errors could also contribute to a wider discussion in the humanities around quantitative methods.
+
+\subsection{Language diversity and variation}
+
+While philologists and computational linguists have been developing computational resources to model linguistic and orthographic variation for decades, documents with mixtures of languages, and non-standard variants of languages, remain a common impediment to off-the-shelf OCR solutions. In some cases, these problems can be overcome by straightforward retraining of language models and other system on more appropriate data. In other cases, we need different language models to account for dialectal and orthographic variation, pervasive switching among languages, or the typographic conventions of different genres (e.g., lexica or apparatus critici). The smaller amounts of data available for any particular historical period, dialect, or genre will make methods for unsupervised adaptation and structured language model priors more attractive.
+
+\subsection{OCR at corpus scale}
+
+Many humanities OCR projects use off-the-shelf that fit their data more or less well; others train new models on their own annotated training data. Many projects, particularly in libraries, operate at a scale, and with such a diversity of data, that makes direct retraining less satisfactory. We see an opportunity for developing corpus-scale quality control and model adaptation approaches, as exemplified by the German OCR-D project, Google's massively multilingual OCR pipeline, and the deployment of OCR pipelines at the Library of Congress and Internet Archive. In particular, we can hope to take advantage of the scale of the collections already digitized to build better transcription and correction models.
+
+\appendix{participants}{OCR Workshop Attendees}
+
+\begin{itemize}
+  
+\item Hannah Alpert-Abrams, CLIR Postdoctoral Fellow in Data Curation for Latin American Studies, University of Texas at Austin
+
+\item Taylor Berg-Kirkpatrick, Assistant Professor Computer Science, Carnegie Mellon University
+
+\item Brett Bobley, Director and Chief Information Officer, NEH Office of Digital Humanities
+
+\item Dan Cohen, Dean of Libraries, Vice Provost for Information Collaboration, and Professor of History, Northeastern University
+
+\item Ryan Cordell, Associate Professor of English, Northeastern University
+
+\item Greg Crane, Professor of Classics, Tufts University
+
+\item Elizabeth Dillon, Professor of English, Northeastern University
+
+\item John Gonzalez, Director of Engineering, Internet Archive
+
+\item Jacob Harris, Ancestry.org/Newspapers.com
+
+\item Nada Naji, Lecturer in Computer Science, Northeastern University
+
+\item Matthew Miller, Assistant Professor of Persian and Digital Humanities, and Associate Director of the Roshan Initiative in Persian Digital Humanities, University of Maryland
+
+\item Laura Nelson, Assistant Professor of Sociology and Anthropology, Northeastern University
+
+\item Bethany Nowviskie, Director of the Digital Library Federation (DLF)
+
+\item Ashok Popat, Research Scientist, Google
+
+\item William Quinn, Ph.D. Candidate in English, Northeastern University
+
+\item Ulrich Schneider, Director, Leipzig University Library
+
+\item Donald Sturgeon, College Fellow, East Asian Languages and Civilizations, Harvard University
+
+\item David Smith, Associate Professor of Computer Science, Northeastern University
+
+\item Elizabeth Tran, Senior Program Officer, NEH
+
+\item Donald J. Waters, Senior Program Officer, Andrew W. Mellon Foundation
+
+\end{itemize}
+
 \end{document}
-
-<p class="c6 c32"><span class="c2"></span><hr style="page-break-before:always;display:none;"><h2 class="c11 c37" id="h.rllgalyuv7d4"><span class="c25"></span></h2><h2 class="c11" id="h.och4zi8tx7q4"><span class="c25">References</span></h2><ul class="c23 lst-kix_1yzjdld97j5x-0 start"><li class="c0 c12"><span class="c2">ACL = Proceedings of the Association for Computational Linguistics</span></li><li class="c0 c12"><span class="c2">ECDL = Proceedings of the European Conference on Digital Libraries</span></li><li class="c0 c12"><span class="c2">ICDAR = Proceedings of the International Conference on Document Analysis and Recognition</span></li><li class="c0 c12"><span class="c2">JCDL = Proceedings of the ACM+IEEE Joint Conference on Digital Libraries</span></li><li class="c0 c12"><span class="c2">NAACL = Proceedings of the North American Chapter of the Association for Computational Linguistics</span></li><li class="c0 c12"><span class="c2">SIGIR = Proceedings of the ACM Special Interest Group on Information Retrieval</span></li></ul>
-
-<p class="c3"><span>Marie-Louise Ayres (2013) ``Singing for their supper'': Trove, Australian newspapers, and the crowd. In </span><span class="c9">IFLA World Library and Information Congress. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://library.ifla.org/245/1/153-ayres-en.pdf&amp;sa=D&amp;ust=1542739736289000">http://library.ifla.org/245/1/153-ayres-en.pdf</a>&nbsp;</span>
-
-<p class="c3"><span>Taylor Berg-Kirkpatrick, Greg Durrett, and Dan Klein (2013). Unsupervised transcription of historical documents. In </span><span class="c9">ACL</span><span class="c2">.</span>
-
-<p class="c3"><span>Taylor Berg-Kirkpatrick and Dan Klein (2014). Improved typesetting models for historical OCR. In </span><span class="c9">ACL</span><span class="c2">.</span>
-
-<p class="c3"><span>Katherine Bode (2016). Thousands of titles without authors: Digitized newspapers, serial fiction, and the challenges of anonymity. </span><span class="c9">Book History</span><span class="c2">, 16.</span>
-
-<p class="c3"><span>Federico Boschetti, Matteo Romanello, Alison Babeu, David Bamman, and Gregory Crane (2009). Improving OCR accuracy for classical critical editions. In </span><span class="c9">ECDL</span><span class="c2">.</span>
-
-<p class="c3"><span>&nbsp;Thomas M. Breuel, Adnan Ul-Hasan, Mayce Al Azawi, and Faisal Shafait (2013). High-performance OCR for printed English and Fraktur using LSTM Networks. In </span><span class="c9">ICDAR</span><span class="c2">.</span>
-
-<p class="c3"><span>Thomas M. Breuel (2017). Robust, simple page segmentation using hybrid convolutional MDLSTM networks. In </span><span class="c9">ICDAR</span><span class="c2">.</span>
-
-<p class="c3"><span>Tim Causer, Kris Grint, Anna-Maria Sichani, and Melissa Terras (2018). `Making such bargain': </span><span class="c9">Transcribe Bentham&nbsp;and the quality and cost-effectiveness of crowdsourced transcription. </span><span class="c9">Digital Scholarship in the Humanities</span><span class="c2">, 33(3):467--487.</span>
-
-<p class="c3"><span>Rui Dong and David A. Smith (2018). Multi-input attention for unsupervised OCR correction. In </span><span class="c9">ACL</span><span class="c2">.</span>
-
-<p class="c3"><span>Greta Franzini (2012--span><span class="c9">A Catalogue of Digital Editions. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=https://zenodo.org/badge/latestdoi/42574907&amp;sa=D&amp;ust=1542739736291000">https://zenodo.org/badge/latestdoi/42574907</a></span>
-
-<p class="c3"><span>Greta Franzini, Mike Kestemont, Gabriela Rotari, Melina Jander, Jeremi K. Ochab, Emily Franzini, Joanna Byszuk, Jan Rybicki (2018). Attributing authorship in the noisy digitized correspondence of Jacob and Wilhelm Grimm. </span><span class="c9">Frontiers in Digital Humanities, 5(4). </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=https://doi.org/10.3389/fdigh.2018.00004&amp;sa=D&amp;ust=1542739736291000">https://doi.org/10.3389/fdigh.2018.00004</a></span>
-
-<p class="c3"><span>Dan Garrette, Hannah Alpert-Abrams, Taylor Berg-Kirkpatrick, and Dan Klein (2015). Unsupervised code-switching for multilingual historical document transcription. In </span><span class="c9">NAACL</span><span class="c2">.</span>
-
-<p class="c3"><span>Monika Henzinger (2006). Finding near-duplicate web pages: A large-scale evaluation of algorithms. In </span><span class="c9">SIGIR</span><span class="c2">, pages 284--291.</span>
-
-<p class="c3"><span>Marshall Hodgson (1974). </span><span class="c9">The Venture of Islam: Conscience and History in a World Civilization</span><span class="c2">, Vols 1-3. Chicago: The University of Chicago Press.</span>
-
-<p class="c3"><span>Daniel J. Hopkins and Gary King (2010). A method of automated nonparametric content analysis for social science. </span><span class="c9">American Journal of Political Science, 54(1):229--247. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://doi.org/10.1111/j.1540-5907.2009.00428.x&amp;sa=D&amp;ust=1542739736292000">http://doi.org/10.1111/j.1540-5907.2009.00428.x</a></span>
-
-<p class="c3"><span>Benjamin Kiessling, Matthew Thomas Miller, Maxim G. Romanov, and Sarah Bowen Savant (2017). Important new developments in Arabographic optical character recognition (OCR). </span><span class="c9">Al-&#703;U&#7779;&#363;r al-Wus&#7789;&#257;&nbsp;25:1--17. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://islamichistorycommons.org/mem/wp-content/uploads/sites/55/2017/11/UW-25-Savant-et-al.pdf&amp;sa=D&amp;ust=1542739736292000">http://islamichistorycommons.org/mem/wp-content/uploads/sites/55/2017/11/UW-25-Savant-et-al.pdf</a></span>
-
-<p class="c3"><span>Gary King, Patrick Lam, and Margaret E. Roberts (2017). Computer-assisted keyword and document set discovery from unstructured text. </span><span class="c9">American Journal of Political Science, 61(4):971-988. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://j.mp/2nxUa8N&amp;sa=D&amp;ust=1542739736293000">http://j.mp/2nxUa8N</a></span>
-
-<p class="c3"><span>Okan Kolak, William Byrne, and Philip Resnik (2003). A generative, probabilistic OCR model for NLP applications. In </span><span class="c9">NAACL</span><span class="c2">, pages 55--62.</span>
-
-<p class="c3"><span>Gary Kopec and Mauricio Lomelin (1996). Document-specific character template estimation. In </span><span class="c9">Proceedings of the International Society for Optics and Photonics</span><span class="c2">.</span>
-
-<p class="c3"><span>William B. Lund, Douglas J. Kennard, and Eric K. Ringger (2013). Why multiple document image binarizations improve OCR. In </span><span class="c9">Workshop on Historical Document Imaging and Processing</span><span class="c2">.</span>
-
-<p class="c3"><span>William B. Lund, Daniel D. Walker, and Eric K. Ringger (2011). Progressive alignment and discriminative error correction for multiple OCR engines. In </span><span class="c9">ICDAR</span><span class="c2">.</span>
-
-<p class="c3"><span>Manuel Mager, Ximena Gutierrez-Vasques, Gerardo Sierra, Ivan Meza (2018). Challenges of language technologies for the indigenous languages of the Americas. In </span><span class="c9">COLING.</span>
-
-<p class="c3"><span>Bonnie Mak (2014). Archaeology of a digitization. </span><span class="c9">Journal of the Association for Information Science and Technology</span><span class="c2">, 65(8).</span>
-
-<p class="c3"><span>Jerome McGann (2014). </span><span class="c9">A New Republic of Letters: Memory and Scholarship in the Age of Digital Reproduction</span><span class="c2">. Harvard University Press.</span>
-
-<p class="c3"><span>Benjamin Meier, Thilo Stadelmann, Jan Stampfli, Marek Arnold, and Mark Cieliebak (2017). Fully convolutional neural networks for newspaper article segmentation. In </span><span class="c9">ICDAR, pages 414--419. </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://doi.org/10.1109/ICDAR.2017.75&amp;sa=D&amp;ust=1542739736294000">http://doi.org/10.1109/ICDAR.2017.75</a></span>
-
-<p class="c3"><span>Matthew Thomas Miller, Maxim Romanov, and Sarah Bowen Savant (2018). Digitizing the textual heritage of the premodern Islamicate world: Principles and plans. </span><span class="c9">International Journal of Middle Eastern Studies, 50:103--109.</span>
-
-<p class="c3"><span>Laura K. Nelson (2017). Computational grounded theory. </span><span class="c9">Sociological Methods &amp; Research, </span><span class="c9">19(3). </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://doi.org/10.1177/0049124117729703&amp;sa=D&amp;ust=1542739736295000">http://doi.org/10.1177/0049124117729703</a></span>
-
-<p class="c3"><span>Sofia Ares Oliveira, Benoit Seguin, and Fr&eacute;d&eacute;ric Kaplan (2018). dhSegment: A generic deep-learning approach for document segmentation. In </span><span class="c9">Frontiers in Handwriting Recognition (ICFHR)</span><span class="c2">, pages 7-12.</span>
-
-<p class="c3"><span>Andrew Piper (2018). </span><span class="c9">Enumerations: Data and Literary Study</span><span class="c2">. University of Chicago Press.</span>
-
-<p class="c3"><span>David A. Smith, Ryan Cordell, Elizabeth Maddock Dillon, Nick Stramp, and John Wilkerson (2014). Detecting and modeling local text reuse. In </span><span class="c9">JCDL</span><span class="c2">.</span>
-
-<p class="c3"><span>David A. Smith, Ryan Cordell, and Abigail Mullen (2015). Computational methods for uncovering reprinted texts in antebellum newspapers. </span><span class="c9">American Literary History</span><span class="c2">, 27(3).</span>
-
-<p class="c3"><span>T. F. Smith and M. S. Waterman (1981). Identification of common molecular subsequences. </span><span class="c9">Journal of Molecular Biology</span><span class="c2">, 147(1):195--197.</span>
-
-<p class="c3"><span class="c2">Uwe Springmann and Anke L&uuml;deling (2016). OCR of historical printings with an application to building diachronic corpora: A case study using the RIDGES herbal corpus. arXiv preprint 1608.02153.</span>
-
-<p class="c3"><span>Andrew Stauffer (2012). The nineteenth-century archive in the digital age. </span><span class="c9">European Romantic Review</span><span class="c2">, 23(3).</span>
-
-<p class="c3"><span>Donald Sturgeon (2017). Unsupervised extraction of training data for pre-modern Chinese OCR. In </span><span class="c9">Proceedings of the Florida Artificial Intelligence Research Society Conference (FLAIRS)</span><span class="c2">, pages 613--618.</span>
-
-<p class="c3"><span>Xiang Tong and David A. Evans (1996). A statistical approach to automatic OCR error correction in context. In </span><span class="c9">Proceedings of the Workshop on Very Large Corpora</span><span class="c2">, pages 88--100.</span>
-
-<p class="c3"><span>Ted Underwood (2014). Theorizing research practices we forgot to theorize twenty years ago. </span><span class="c9">Representations</span><span class="c2">&nbsp;127(1):64--72.</span>
-
-<p class="c3"><span>David Wemhoener, Ismet Zeki Yalniz, and R. Manmatha (2013). Creating an improved version using noisy OCR from multiple editions. In </span><span class="c9">ICDAR</span><span class="c2">, pages 160--164.</span>
-
-<p class="c3"><span>John Wilkerson, David A. Smith, and Nick Stramp (2015). Tracing the flow of policy ideas in legislatures: A text reuse approach. </span><span class="c9 c47">American Journal of Political Science.</span>
-
-<p class="c3"><span>Shaobin Xu and David A. Smith (2017). Retrieving and combining repeated passages to improve OCR. In </span><span class="c9">JCDL</span><span class="c2">.</span>
-
-<p class="c3"><span>Yue Xu, Wenhao He, Fei Yin, and Cheng-Lin Liu (2017). Page segmentation for historical handwritten documents using fully convolutional networks. In </span><span class="c9">ICDAR, pages 541--546.</span><hr style="page-break-before:always;display:none;"><h1 class="c15" id="h.qtm99dfyf4uo"><span class="c31 c39"></span></h1><h1 class="c18" id="h.9i3kmj8ahf16"><span class="c31 c39">Appendices</span></h1><h2 class="c11" id="h.4zj5mclu6rv"><span class="c25">Appendix A: Interview Questions</span></h2>
-
-<p class="c6"><span class="c2">Below we list the questions with which we began the targeted interviews conducted at the start of our study, though we often adjusted these prompts as interviews progressed in order to follow individuals' ideas and insights. We will provide access to our notes on these interviews for research purposes.</span><ol class="c23 lst-kix_3ppwa0k6dex6-0 start" start="1"><li class="c0 c12"><span class="c2">What are the areas of greatest need (i.e. the areas where better OCR would be a game-changer) in your area of research?</span></li><li class="c0 c12"><span class="c2">What kinds of research questions are you able to ask with current OCR?</span></li><li class="c0 c12"><span class="c2">What kinds of research questions can you not even ask with current, errorful OCR?</span></li><li class="c0 c12"><span class="c2">What are the greatest recent advances in research with OCR and how have they changed the research landscape?</span></li><li class="c0 c12"><span class="c2">Where has OCR been most helpful for your particular research area?</span></li><li class="c0 c12"><span class="c2">Where is the most promising work being done? Good examples to emulate?</span></li><li class="c0 c12"><span class="c2">What are the most promising techniques for improving our assessment of the reliability of research conclusions derived from OCR data?</span></li><li class="c0 c12"><span class="c2">What is an example of an OCR corpus that had errors but still made research possible? (i.e. what are research-tolerable errors?)</span></li><li class="c0 c12"><span class="c2">What are some examples of texts too bad to use? What kinds of improvements are most urgent for these? &nbsp;</span></li></ol><h2 class="c11" id="h.wzuls4buuav"><span>Appe</span><span class="c25">ndix B: Executive Summary of Interviews and Survey</span></h2>
-
-<p class="c6"><span class="c2">This summary was prepared in advance of the workshop at Northeastern University, and distributed to workshop participants in order to seed our conversation. </span><h3 class="c10" id="h.feq7kc32q0kx"><span class="c19">Executive Summary of Community Survey and Discussions</span></h3>
-
-<p class="c6"><span class="c2">February 7, 2018</span>
-
-<p class="c6"><span class="c2">To prepare for our workshop and final report on an agenda for historical and multilingual OCR, we conducted an online survey, interviews with individual researchers, and group discussions on specific topics. We aimed to represent the views and needs of humanities researchers working with transcribed documents; library professionals curating, digitizing, and cataloguing their collections; and OCR researchers in academia and industry. These conversations revealed several interesting avenues for making progress in historical OCR; here, we discuss five broad areas that it seems to us are particularly promising. Notwithstanding these lessons we have drawn from the survey so far, we encourage workshop participants to raise further issues.</span><h4 class="c41" id="h.rb1z39x49a4r"><span class="c21">Corpora and evaluation</span></h4>
-
-<p class="c6"><span class="c2">Probably the most important consideration in making progress on historical and multilingual OCR will be the availability of annotated data for evaluating the performance of OCR systems. To lower barriers to entry, both the images and the reference transcription should be released &nbsp;under open-access licenses. Transcription guidelines should encourage practices useful for training OCR, e.g., preserving hyphenation, original spelling, and page location information. Normalized transcriptions aligned to OCR output and born-digital works can provide alternative annotated data for training and testing. In languages and collections where digitization is just beginning (e.g., Arabic), cataloguing and OCR may proceed in tandem.</span>
-
-<p class="c6"><span class="c2">Many humanities projects have had success with distributed transcription and editing, whether as part of coursework, as independent student contributions to research, or through the contributions of wider communities of interest (``the crowd''). Designing these systems for contribution with OCR in mind could provide additional payoff for human effort. Other mixed-initiative human-computer systems might be developed and applied.</span>
-
-<p class="c6"><span class="c2">While character- and word-error rates are useful, general evaluation metrics, researchers could also design metrics that correlate well with downstream tasks. (See ``Working with imperfect OCR'' below.) Evaluation metrics for layout analysis are necessary for making progress on that task.</span><h4 class="c41" id="h.knmprqxcg31n"><span class="c21">Layout analysis</span></h4>
-
-<p class="c6"><span class="c2">Historical printed and manuscript documents present an intimidating array of different formats. Manuscript annotations make even first-pass text detection more difficult, and the difficulties only grow with multiple registers of footnotes, marginalia, and other typographic devices. Reference works, newspapers, and avant-garde literature mix authors, genres, and even languages (see below) on a single sheet. New research is needed to develop useful metrics for layout analysis. New end-to-end recognition methods can provide opportunities to propagate information from text transcription and language modeling back to layout analysis. The interests of bibliographers, book historians, and others in the material presentation of text can help researchers develop models of layout, composition, and typography.</span><h4 class="c41" id="h.k80yjhyxkl78"><span class="c21">Working with imperfect OCR</span></h4>
-
-<p class="c6"><span class="c2">When asked why they choose not to use OCR'd data, researchers commonly cite inaccurate transcriptions; other researchers use ``dirty'' data with success. Since scholars naturally don't want to waste their time with data that turn out not to be useful, it is difficult to assess ``how dirty is too dirty'' for different tasks by meta-analysis of existing work. Some work has been done measuring the impact of OCR quality on downstream tasks from topic modeling and part-of-speech tagging to information retrieval. In addition to more work on statistical inference and post-correction, we might look for improvements in statistical communication. For example, if a search engine returns five results for some rare term, can we infer enough about the error characteristics of the underlying OCR to estimate how likely the true frequency is likely to be three, or eight? These issues of reasoning about and communicating possible errors could also contribute to a wider discussion in the humanities around quantitative methods.</span><h4 class="c41" id="h.a1xygpp9je9o"><span class="c21">Language diversity and variation</span></h4>
-
-<p class="c6"><span class="c2">While philologists and computational linguists have been developing computational resources to model linguistic and orthographic variation for decades, documents with mixtures of languages, and non-standard variants of languages, remain a common impediment to off-the-shelf OCR solutions. In some cases, these problems can be overcome by straightforward retraining of language models and other system on more appropriate data. In other cases, we need different language models to account for dialectal and orthographic variation, pervasive switching among languages, or the typographic conventions of different genres (e.g., lexica or apparatus critici). The smaller amounts of data available for any particular historical period, dialect, or genre will make methods for unsupervised adaptation and structured language model priors more attractive.</span><h4 class="c41" id="h.uik7xiep2024"><span class="c21">OCR at corpus scale</span></h4>
-
-<p class="c6"><span class="c2">Many humanities OCR projects use off-the-shelf that fit their data more or less well; others train new models on their own annotated training data. Many projects, particularly in libraries, operate at a scale, and with such a diversity of data, that makes direct retraining less satisfactory. We see an opportunity for developing corpus-scale quality control and model adaptation approaches, as exemplified by the German OCR-D project, Google's massively multilingual OCR pipeline, and the deployment of OCR pipelines at the Library of Congress and Internet Archive. In particular, we can hope to take advantage of the scale of the collections already digitized to build better transcription and correction models.</span><h2 class="c11" id="h.weqa29ips9ph"><span class="c25">Appendix C: OCR Workshop Attendees</span></h2><ul class="c23 lst-kix_kx2nzrp3w8ei-0 start"><li class="c22 c12"><span class="c2">Hannah Alpert-Abrams, &nbsp;CLIR Postdoctoral Fellow in Data Curation for Latin American Studies, University of Texas at Austin</span></li><li class="c12 c22"><span class="c2">Taylor Berg-Kirkpatrick, Assistant Professor Computer Science, Carnegie Mellon University</span></li><li class="c22 c12"><span class="c2">Brett Bobley, Director and Chief Information Officer, NEH Office of Digital Humanities</span></li><li class="c22 c12"><span class="c2">Dan Cohen, Dean of Libraries, Vice Provost for Information Collaboration, and Professor of History, Northeastern University</span></li><li class="c22 c12"><span class="c2">Ryan Cordell, Associate Professor of English, Northeastern University</span></li><li class="c22 c12"><span class="c2">Greg Crane, Professor of Classics, Tufts University</span></li><li class="c22 c12"><span class="c2">Elizabeth Dillon, Professor of English, Northeastern University</span></li><li class="c22 c12"><span class="c2">John Gonzalez, Director of Engineering, Internet Archive</span></li><li class="c22 c12"><span class="c2">Jacob Harris, Ancestry.org/Newspapers.com</span></li><li class="c22 c12"><span class="c2">Nada Naji, Computer Science, Northeastern University</span></li><li class="c22 c12"><span>Matthew Miller, Assistant Professor of Persian&nbsp;and Digital Humanities,</span><span class="c2">&nbsp;and Associate Director of the Roshan Initiative in Persian Digital Humanities, University of Maryland</span></li><li class="c22 c12"><span class="c2">Laura Nelson, Assistant Professor of Sociology and Anthropology, Northeastern University</span></li><li class="c22 c12"><span class="c2">Bethany Nowviskie, Director of the Digital Library Federation (DLF)</span></li><li class="c22 c12"><span class="c2">Ashok Popat, Research Scientist, Google</span></li><li class="c22 c12"><span class="c2">William Quinn, Ph.D. Candidate in English, Northeastern University</span></li><li class="c22 c12"><span class="c2">Ulrich Schneider, Director, Leipzig University Library </span></li><li class="c22 c12"><span class="c2">Donald Sturgeon, College Fellow, East Asian Languages and Civilizations, Harvard University</span></li><li class="c22 c12"><span class="c2">David Smith, Associate Professor of Computer Science, Northeastern University</span></li><li class="c22 c12"><span class="c2">Elizabeth Tran, Senior Program Officer, NEH</span></li><li class="c22 c12"><span class="c2">Donald J. Waters, Senior Program Officer, Andrew W. Mellon Foundation</span></li></ul>
 
 <p class="c27 c32 c43"><span class="c2"></span><h2 class="c11" id="h.5ex3r5yuquhl"><span class="c25">Appendix D: Creating Ground Truth by Aligning OCR with Manual Transcripts</span></h2>
 
