@@ -667,60 +667,55 @@ Many humanities OCR projects use off-the-shelf that fit their data more or less 
 
 \end{itemize}
 
-\end{document}
+\appendix{eval}{Creating Ground Truth by Aligning OCR with Manual Transcripts}
 
-<p class="c27 c32 c43"><span class="c2"></span><h2 class="c11" id="h.5ex3r5yuquhl"><span class="c25">Appendix D: Creating Ground Truth by Aligning OCR with Manual Transcripts</span></h2>
+We conducted experiments to test the feasibility of Recommendation~\ref{rec:editions} on aligning existing editions to OCR output to create training and test sets and Recommendation~\ref{rec:stats} on exploiting multiple copies and multiple editions to improve OCR.
 
-<p class="c6"><span>We conducted experiments to test the feasibility of recommendation #3 on aligning existing editions to OCR output to create training and test sets and recommendation #1 on exploiting multiple copies and multiple editions to improve OCR.</span>
+We used the one-best OCR output from two sources: two million issues from the Chronicling America collection of historic U.S. newspapers, which is the largest public-domain full-text collection in the Library of Congress (\url{chroniclingamerica.loc.gov});\footnote{Historical newspapers also constitute the largest digitized text collections in the Australian National Library (Trove) and the Europeana consortium.} and three million public-domain books in the Internet Archive (\url{https://archive.org/details/texts}).\footnote{Google Books and the Hathi Trust consortium also hold many in-copyright books and require licensing agreements to access public-domain materials.} This raw OCR output is the kind that most researchers would download---or search in a retrieval system.
 
-<p class="c6"><span>We used the one-best OCR output from two sources: two million issues from the Chronicling America collection of historic U.S. newspapers, which is the largest public-domain full-text collection in the Library of Congress (</span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://chroniclingamerica.loc.gov&amp;sa=D&amp;ust=1542739736303000">chroniclingamerica.loc.gov</a>);</span><sup><a href="#ftnt6" id="ftnt_ref6">[6]</a></sup><span>&nbsp;and three million public-domain books in the Internet Archive (</span><span class="c1"><a class="c4" href="https://www.google.com/url?q=https://archive.org/details/texts&amp;sa=D&amp;ust=1542739736303000">https://archive.org/details/texts</a>).</span><sup><a href="#ftnt7" id="ftnt_ref7">[7]</a></sup><span class="c2">&nbsp;This raw OCR output is the kind that most researchers would download---or search in a retrieval system.</span>
+For supervised training and for evaluation, we aligned manually transcribed texts to these one-best OCR transcripts: 1384 issues of the Richmond (Virginia) Daily Dispatch from 1860--1865 (RDD: \url{dlxs.richmond.edu/d/ddr/})\footnote{The transcription from the University of Richmond includes all articles but only some advertisements.} and 934 books from 1500--1800 from the Text Creation Partnership (TCP: \url{www.textcreationpartnership.org}). Both of these manually transcribed collections are in the public domain and in English, although both Chronicling America and the Internet Archive also contain much non-English text.
 
-<p class="c6"><span>For supervised training and for evaluation, we aligned manually transcribed texts to these one-best OCR transcripts: 1384 issues of the Richmond (Virginia) Daily Dispatch from 1860--1865 (RDD: </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://dlxs.richmond.edu/d/ddr/&amp;sa=D&amp;ust=1542739736303000">dlxs.richmond.edu/d/ddr/</a>)</span><sup><a href="#ftnt8" id="ftnt_ref8">[8]</a></sup><span>&nbsp;and 934 books from 1500--1800 from the Text Creation Partnership (TCP: </span><span class="c1"><a class="c4" href="https://www.google.com/url?q=http://www.textcreationpartnership.org&amp;sa=D&amp;ust=1542739736304000">www.textcreationpartnership.org</a></span><span class="c2">). Both of these manually transcribed collections are in the public domain and in English, although both Chronicling America and the Internet Archive also contain much non-English text.</span>
+To get more evidence for the correct reading of an OCR'd line, we aligned each OCR'd RDD issue to \emph{other} issues of the RDD and to other newspapers from Chronicling America and aligned each OCR'd TCP page to other pre-1800 books in the Internet Archive. To perform these alignments between noisy OCR transcripts efficiently, we used methods from our earlier work on text-reuse analysis (Smith et al., 2014; Wilkerson et al., 2015; Smith et al., 2015). An inverted index of hashes of word 5-grams was produced, and then all pairs from different pages in the same posting list were extracted. Pairs of pages with more than five shared hashed 5-grams were aligned with the Smith-Waterman algorithm with equal costs for insertion, deletion, and substitution, which returns a maximally aligned subsequence in each pair of pages (Smith and Waterman, 1981). Aligned passages that were at least five lines long in the target RDD or TCP text were output. For each target OCR line---i.e., each line in the training or test set---there are thus, in addition to the ground-truth manual transcript, zero or more \textbf{witnesses} from similar texts, to use the term from textual criticism.
 
-<p class="c6"><span>To get more evidence for the correct reading of an OCR&#39;d line, we aligned each OCR&#39;d RDD issue to </span><span class="c9">other&nbsp;issues of the RDD and to other newspapers from Chronicling America and aligned each OCR&#39;d TCP page to other pre-1800 books in the Internet Archive. To perform these alignments between noisy OCR transcripts efficiently, we used methods from our earlier work on text-reuse analysis (Smith et al., 2014; Wilkerson et al., 2015; Smith et al., 2015). An inverted index of hashes of word 5-grams was produced, and then all pairs from different pages in the same posting list were extracted. Pairs of pages with more than five shared hashed 5-grams were aligned with the Smith-Waterman algorithm with equal costs for insertion, deletion, and substitution, which returns a maximally aligned subsequence in each pair of pages (Smith and Waterman, 1981). Aligned passages that were at least five lines long in the target RDD or TCP text were output. For each target OCR line---i.e., each line in the training or test set---there are thus, in addition to the ground-truth manual transcript, zero or more </span><span class="c13">witnesses</span><span class="c2">&nbsp;from similar texts, to use the term from textual criticism.</span>
+In our experiments on OCR correction, each training and test example is a line of text following the layout of the scanned image documents.\footnote{The datasets can be downloaded from \url{http://www.ccs.neu.edu/home/dongrui/ocr.html}} The average number of characters per line is 42.4 for the RDD newspapers and 53.2 for the TCP books. Table~\ref{tab:reprints} lists statistics for the number of OCR'd text lines with manual transcriptions and additional witnesses. 43\% of the manually transcribed lines have witnesses in the RDD newspapers, and 64\% of them have witnesses in the TCP books. In the full Chronicling America data (not just the RDD), 44\% of lines align to at least one other witness. Although not all OCR collections will have this level of repetition, it is notable that these collections, which are some of the largest public-domain digital libraries, do exhibit this kind of reprinting. Similarly, at least 25\% of the pages in Google's web crawls are duplicates (Henzinger, 2006). This analysis suggests that, at least for nineteenth-century newspapers and pre-1800 English books, we are likely to find a significant number of editions with multiple digitized copies.
 
-<p class="c6"><span>In our experiments on OCR correction, each training and test example is a line of text following the layout of the scanned image documents.</span><sup><a href="#ftnt9" id="ftnt_ref9">[9]</a></sup><span class="c2">&nbsp;The average number of characters per line is 42.4 for the RDD newspapers and 53.2 for the TCP books. Table D.1 lists statistics for the number of OCR&#39;d text lines with manual transcriptions and additional witnesses. 43\% of the manually transcribed lines have witnesses in the RDD newspapers, and 64\% of them have witnesses in the TCP books. In the full Chronicling America data (not just the RDD), 44\% of lines align to at least one other witness. Although not all OCR collections will have this level of repetition, it is notable that these collections, which are some of the largest public-domain digital libraries, do exhibit this kind of reprinting. &nbsp;Similarly, at least 25\% of the pages in Google&#39;s web crawls are duplicates (Henzinger, 2006). This analysis suggests that, at least for nineteenth-century newspapers and pre-1800 English books, we are likely to find a significant number of editions with multiple digitized copies.</span><a id="t.d76fecb806b49d6a2166d8e08c5eeea181f23aba"></a><a id="t.0"></a><table class="c44"><tbody><tr class="c38"><td class="c42" colspan="1" rowspan="1">
+\begin{table}
+  \centering
+  \begin{tabular}{lp{0.32\textwidth}p{0.32\textwidth}}
+    Dataset & \# lines w/manual transcript & \# lines w/manual transcript \& alternate witnesses \\ \hline
+    RDD newspapers & 2.2M & 0.95M (43\%) \\
+    TCP books & 8.6M & 5.5M (64\%) \\
+  \end{tabular}
+  \caption{Statistics for the number of OCR'd lines in millions (M) from the Richmond Dispatch and TCP Books with manual transcriptions (Column 1) or with both transcriptions and multiple witnesses (Column 2).}
+  \label{tab:reprints}
+\end{table}
 
-<p class="c17"><span class="c2">Dataset</span></td><td class="c42" colspan="1" rowspan="1">
+\appendix{survey}{OCR Survey Questions}
 
-<p class="c17"><span class="c2"># lines w/manual transcript</span></td><td class="c42" colspan="1" rowspan="1">
+\begin{enumerate}
 
-<p class="c17"><span class="c2"># lines w/manual transcript &amp; alternate witnesses</span></td></tr><tr class="c38"><td class="c42" colspan="1" rowspan="1">
+\item How would you primarily describe your job?
 
-<p class="c17"><span class="c2">RDD newspapers</span></td><td class="c42" colspan="1" rowspan="1">
+\item Has your work with OCR typically been for individual research or as part of larger collaborations?
 
-<p class="c17"><span class="c2">2.2M</span></td><td class="c42" colspan="1" rowspan="1">
+\item Do you regularly use OCR datasets derived from (please check all that apply)?
 
-<p class="c17"><span class="c2">0.95M (43\%)</span></td></tr><tr class="c38"><td class="c42" colspan="1" rowspan="1">
+\item What OCR datasets have you used with (relative) success?
 
-<p class="c17"><span class="c2">TCP books</span></td><td class="c42" colspan="1" rowspan="1">
+\item What OCR datasets were less useful to you and why?
 
-<p class="c17"><span class="c2">8.6M</span></td><td class="c42" colspan="1" rowspan="1">
+\item What OCR tools have you used, with or without success?
 
-<p class="c17"><span class="c2">5.5M (64\%)</span></td></tr></tbody></table>
+\item What research questions have you had success in pursuing using OCR-derived archives?
 
-<p class="c6"><span class="c2">Table D.1: Statistics for the number of OCR'd lines in millions (M) from the Richmond Dispatch and TCP Books with manual transcriptions (Column 1) or with both transcriptions and multiple witnesses (Column 2).</span><h2 class="c11" id="h.w5lun4keg1j7"><span class="c25">Appendix E: OCR Survey Questions</span></h2><ol class="c23 lst-kix_wyotdti61mat-0 start" start="1"><li class="c0 c12"><span class="c2">How would you primarily describe your job?</span></li><li class="c0 c12"><span class="c2">Has your work with OCR typically been for individual research or as part of larger collaborations?</span></li><li class="c0 c12"><span class="c2">Do you regularly use OCR datasets derived from (please check all that apply)?</span></li><li class="c0 c12"><span class="c2">What OCR datasets have you used with (relative) success?</span></li><li class="c0 c12"><span class="c2">What OCR datasets were less useful to you and why?</span></li><li class="c0 c12"><span class="c2">What OCR tools have you used, with or without success?</span></li><li class="c0 c12"><span class="c2">What research questions have you had success in pursuing using OCR-derived archives?</span></li><li class="c0 c12"><span class="c2">How do you determine whether a given OCR dataset is sufficiently accurate to answer a particular research question?</span></li><li class="c0 c12"><span class="c2">What developments in OCR or analysis of OCR would most help your research?</span></li><li class="c0 c12"><span class="c2">Who else should we be talking to about historical and multilingual OCR?</span></li><li class="c0 c12"><span>Would you be willing to be contacted for a follow up interview? If so, please provide your name and email address.</span></li></ol><hr class="c33"><div>
+\item How do you determine whether a given OCR dataset is sufficiently accurate to answer a particular research question?
 
-<p class="c17 c27"><a href="#ftnt_ref1" id="ftnt1">[1]</a><span class="c14">&nbsp;</span><span class="c1 c14"><a class="c4" href="https://www.google.com/url?q=http://heml.mta.ca/lace/&amp;sa=D&amp;ust=1542739736310000">http://heml.mta.ca/lace/</a></span></div><div>
+\item What developments in OCR or analysis of OCR would most help your research?
 
-<p class="c17 c27"><a href="#ftnt_ref2" id="ftnt2">[2]</a><span class="c31 c14">&nbsp;</span></div><div>
+\item Who else should we be talking to about historical and multilingual OCR?
 
-<p class="c17 c27"><a href="#ftnt_ref3" id="ftnt3">[3]</a><span class="c31 c14">&nbsp;</span></div><div>
+\item Would you be willing to be contacted for a follow up interview? If so, please provide your name and email address.
 
-<p class="c17 c27"><a href="#ftnt_ref4" id="ftnt4">[4]</a><span class="c14 c31">&nbsp;</span></div><div>
-
-<p class="c17 c27"><a href="#ftnt_ref5" id="ftnt5">[5]</a><span class="c14">&nbsp;</a></span><span class="c31 c14">&nbsp;</span></div><div>
-
-<p class="c17 c27"><a href="#ftnt_ref6" id="ftnt6">[6]</a><span class="c31 c14">&nbsp;Historical newspapers also constitute the largest digitized text collections in the Australian National Library (Trove) and the Europeana consortium.</span></div><div>
-
-<p class="c17 c27"><a href="#ftnt_ref7" id="ftnt7">[7]</a><span class="c31 c14">&nbsp;Google Books and the Hathi Trust consortium also hold many in-copyright books and require licensing agreements to access public-domain materials.</span></div><div>
-
-<p class="c17 c27"><a href="#ftnt_ref8" id="ftnt8">[8]</a><span class="c31 c14">&nbsp;The transcription from the University of Richmond includes all articles but only some advertisements.</span></div><div>
-
-<p class="c17 c27"><a href="#ftnt_ref9" id="ftnt9">[9]</a><span class="c14">&nbsp;The datasets can be downloaded from </span><span class="c1 c14"><a class="c4" href="https://www.google.com/url?q=http://www.ccs.neu.edu/home/dongrui/ocr.html&amp;sa=D&amp;ust=1542739736311000">http://www.ccs.neu.edu/home/dongrui/ocr.html</a></span><span class="c31 c14">.</span></div><div class="c40">
-
-<p class="c17"><a href="#cmnt_ref1" id="cmnt1">[a]</a><span class="c2">I am happy to give a paragraph on how Open Greek and Latin has produced c. 30 million words of TEI XLM that started as OCR-generated text.</span></div><div class="c40">
-
-<p class="c17"><a href="#cmnt_ref2" id="cmnt2">[b]</a><span class="c2">Sure! If there&#39;s a nice paragraph about overcoming the variation across the different sources in OGL, that&#39;d be great. What&#39;s particularly important for the argument in this paragraph would be, e.g., detecting Greek words embedding in Latin or English. Have you or Bruce done anything with that?</span></div></body></html>
+\end{enumerate}
 
 \end{document}
