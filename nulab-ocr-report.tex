@@ -57,15 +57,35 @@
 
 \setcounter{secnumdepth}{-1}
 
+\usepackage{eso-pic}
+\newcommand\BackgroundPic{%
+\put(0,0){%
+\parbox[b][\paperheight]{\paperwidth}{%
+\vfill
+\centering
+\includegraphics[width=\paperwidth]{VA013RN-0014-mask.png}%
+\vfill
+}}}
+
 \title{\Huge A Research Agenda for \\ Historical and Multilingual \\ Optical Character Recognition}
 
 \author{\huge David A. Smith \and \huge Ryan Cordell}
 
-\date{}
+\date{\centering \vspace{0.2in} \includegraphics[width=5in]{northeastern.png} \vspace{0.5in} \\
+  \includegraphics{nulab.png} \\
+  \vspace{0.2in} \centering \huge with the support of \\ \vspace{0.1in}
+  \includegraphics{mellon.png}}
 
 \begin{document}
+\AddToShipoutPicture*{\BackgroundPic}
 
 \maketitle
+
+(c) 2018 David A. Smith and Ryan Cordell
+
+Image credits
+
+The image of Venetus A (Marciana 822 = Graecus Z. 454) is derived from an original that is (c) 2007, Biblioteca Nazionale Marciana, Venezie, Italia. The derivative image is (c) 2010, Center for Hellenic Studies. All original and derivative images are licensed under the Creative Commons Attribution-Noncommercial-Share Alike 3.0 License. The CHS/Marciana Imaging Project was directed by David Jacobs of the British Library.
 
 \tableofcontents
 
@@ -168,9 +188,9 @@ Creating copies and editions of texts has held a central place in the humanities
 
 \subsection{OCR in the Humanities}
 
-The influence of OCR pervades contemporary humanities research and teaching. Most scholars pay OCR little mind---if they are even aware of it---because corpus analysis seems the province of a small subset of researchers. As Ted Underwood (2014, p. 64) reminds us, however, ``[a]lgorithmic mining of large electronic databases has been quietly central to the humanities for two decades. We call this practice `search,' but `search' is a deceptively modest name for a complex technology that has come to play an evidentiary role in scholarship.'' Researchers and students increasingly rely on databases of digitized historical materials in conducting research, for reasons of geographic or economic access, but also for reasons of preservation, as libraries increasingly restrict physical access to fragile materials after digitization. As a result, researchers and students alike rely on search in OCR collections, often unwittingly. The predominant public interfaces of large-scale archives focus on page images, seeking to present the digitized object as a facsimile of its original, while scholars often cite historical materials directly, even when they were accessed through a digitized edition. Taken together, these practices make it easy to forget that we are all engaged in relatively sophisticated modes of machine reading each time we use a digital archive. Scholars sometimes invoke the OCR of these collections in warnings, as when Andrew Stauffer (2012) cautions, ``Algorithmic searching and text mining'' rely ``almost exclusively on the verbal content of idealized models of nineteenth-century printed materials, models that are themselves vitiated by numerous localized errors in character recognition.''
+The influence of OCR pervades contemporary humanities research and teaching. Most scholars pay OCR little mind---if they are even aware of it---because corpus analysis seems the province of a small subset of researchers. As Ted Underwood \citeyearpar[p.~64]{Underwood:2014ep} reminds us, however, ``[a]lgorithmic mining of large electronic databases has been quietly central to the humanities for two decades. We call this practice `search,' but `search' is a deceptively modest name for a complex technology that has come to play an evidentiary role in scholarship.'' Researchers and students increasingly rely on databases of digitized historical materials in conducting research, for reasons of geographic or economic access, but also for reasons of preservation, as libraries increasingly restrict physical access to fragile materials after digitization. As a result, researchers and students alike rely on search in OCR collections, often unwittingly. The predominant public interfaces of large-scale archives focus on page images, seeking to present the digitized object as a facsimile of its original, while scholars often cite historical materials directly, even when they were accessed through a digitized edition. Taken together, these practices make it easy to forget that we are all engaged in relatively sophisticated modes of machine reading each time we use a digital archive. Scholars sometimes invoke the OCR of these collections in warnings, as when Andrew Stauffer (2012) cautions, ``Algorithmic searching and text mining'' rely ``almost exclusively on the verbal content of idealized models of nineteenth-century printed materials, models that are themselves vitiated by numerous localized errors in character recognition.''
 
-Such critiques have spurred notable attempts to correct errorful OCR in large scale digitization projects. Bonnie Mak (2014) notes that since 1999 the Text Creation Partnership (TCP) has mobilized ``legions of outsourced `vendors' who have keyboarded and tagged over 40,000 early English texts'' in EEBO, as well as another 8,000 for Gale Cengage's Eighteenth-Century Collections Online (ECCO) and Readex's Evans Early American Imprints (Evans-TCP). The Australian Newspaper Digitization Program, the results of which are available through the National Library of Australia's Trove portal, invested significant money in ``manually correcting the titles, subtitles, and first four lines of article text'' over 21 million newspaper pages (as of July 2016), mostly through low-cost, offshore editing services (Bode, 2016). In addition, Trove's interface allows users to manually correct the archive's text data, so that by July 2013, ``more than 100 million lines of text'' had been corrected through ``crowd-sourced effort'' (Ayres, 2013). Even so, the majority of Trove's OCR'd text remains uncorrected, as 100 million hand-corrected lines constitute only a small percentage of the total lines across 21 million newspaper pages. Most historical book and newspaper archives have deemed correction of articles too time consuming and costly; therefore, the bulk of keyword search within large scale archives, whether open-access or commercially licensed, depends on the errorful output of OCR.
+Such critiques have spurred notable attempts to correct errorful OCR in large scale digitization projects. Bonnie Mak \citeyearpar{mak14:_archaeol_digit} notes that since 1999 the Text Creation Partnership (TCP) has mobilized ``legions of outsourced `vendors' who have keyboarded and tagged over 40,000 early English texts'' in EEBO, as well as another 8,000 for Gale Cengage's Eighteenth-Century Collections Online (ECCO) and Readex's Evans Early American Imprints (Evans-TCP). The Australian Newspaper Digitization Program, the results of which are available through the National Library of Australia's Trove portal, invested significant money in ``manually correcting the titles, subtitles, and first four lines of article text'' over 21 million newspaper pages (as of July 2016), mostly through low-cost, offshore editing services (Bode, 2016). In addition, Trove's interface allows users to manually correct the archive's text data, so that by July 2013, ``more than 100 million lines of text'' had been corrected through ``crowd-sourced effort'' \citep{ayres13:_singin_supper}.  Even so, the majority of Trove's OCR'd text remains uncorrected, as 100 million hand-corrected lines constitute only a small percentage of the total lines across 21 million newspaper pages. Most historical book and newspaper archives have deemed correction of articles too time consuming and costly; therefore, the bulk of keyword search within large scale archives, whether open-access or commercially licensed, depends on the errorful output of OCR.
 
 In large part due to these OCR issues, much computational research in the humanities has restricted itself to small, ``cleaner'' corpora such as Project Gutenberg, EEBO-TCP, the Wright American Fiction collection, the Chadwick-Healey British novels collection, or corpora custom-built for particular studies. The University of Richmond's groundbreaking ``Mining the Dispatch'' project (\url{http://dsl.richmond.edu/dispatch/}), for instance, bases its topic models not on the Chronicling America digitization of the Richmond \emph{Daily Dispatch}, but instead on a hand-transcribed subset of the Daily Dispatch. While that project revealed new insights about this important Civil War era newspaper, its methods could not be easily expanded across the much larger Chronicling America collection or its findings compared against the many other newspapers with only OCR transcriptions.
 
@@ -327,7 +347,7 @@ During the period of this study, we performed some pilot experiments on creating
   
 \end{itemize}
 
-This team could also coordinate with communities in textual editing and crowdsourced transcription (see Recommendation~\ref{rec:contributions}) to develop standards harmonizing the transcription standards in several historical languages.
+This team could also coordinate with communities in textual editing and crowdsourced transcription (see Recommendation~\ref{rec:contribution}) to develop standards harmonizing the transcription standards in several historical languages.
 
 \recommend{contribution}{Develop a reusable contribution system for OCR ground truth}
 
